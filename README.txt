@@ -1,8 +1,11 @@
 Building on AWS with TypeScript and Cloud Development Kit 
 https://www.youtube.com/watch?v=hxdcSJAbygg
 
-AWS CDK Patterns
-https://cdkpatterns.com/
+*** AWS CDK Resources ***
+(*) https://cdkpatterns.com/
+(*) https://cdk.dev/
+(*) https://www.cdkday.com/
+(*) AWS Tech Talks
 
 
 View a list of the available CDK templates:

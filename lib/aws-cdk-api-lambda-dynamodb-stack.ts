@@ -48,9 +48,13 @@ export class AwsCdkApiLambdaDynamodbStack extends cdk.Stack {
 		// grant the Lambda function full access to the DynamoDB table
 		table.grantFullAccess(myLambda);
 
-		// create an API Gateway REST API with Lambda proxy integration
-		const api = new apigateway.LambdaRestApi(this, 'myApi', {
-			handler: myLambda, // the default Lambda function that handles all requests from this API.
-		});
+		// create an API Gateway REST API
+		const api = new apigateway.RestApi(this, 'myApi');
+
+		// add a resource to the root of the API
+		const items = api.root.addResource('items');
+
+		// adds a GET method to an API Gateway resource named 'items' and integrates it with a Lambda function named 'myLambda'.
+		items.addMethod('GET', new apigateway.LambdaIntegration(myLambda));
 	}
 }
