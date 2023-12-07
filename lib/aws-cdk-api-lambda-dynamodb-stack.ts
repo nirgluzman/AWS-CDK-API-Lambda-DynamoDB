@@ -1,7 +1,12 @@
 import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import { type Construct } from 'constructs';
 
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+
+import { join } from 'path';
 
 export class AwsCdkApiLambdaDynamodbStack extends cdk.Stack {
 	constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -20,6 +25,18 @@ export class AwsCdkApiLambdaDynamodbStack extends cdk.Stack {
 				ignorePublicAcls: false,
 				restrictPublicBuckets: false,
 			},
+		});
+
+		// create a Lambda function
+		const myLambda = new NodejsFunction(this, 'myLambda', {
+			runtime: lambda.Runtime.NODEJS_LATEST,
+			entry: join(__dirname, '..', 'lambda-functions', 'main.ts'), // path to the Lambda function source code
+			handler: 'handler',
+		});
+
+		// create an API Gateway REST API with Lambda proxy integration
+		const api = new apigateway.LambdaRestApi(this, 'myApi', {
+			handler: myLambda, // the default Lambda function that handles all requests from this API.
 		});
 	}
 }

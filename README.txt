@@ -8,8 +8,19 @@ https://cdkpatterns.com/
 View a list of the available CDK templates:
 cdk init --list
 
+
 Template for a CDK Application:
 cdk init app --language typescript
+
+
+Type definitions for aws-lambda:
+npm install --save @types/aws-lambda
+
+
+NodejsFunction:
+https://dev.to/binhbv/building-lambda-functions-with-typescript-in-aws-cdk-2om5
+In order to write a Lambda function in TypeScript and provision it with CDK, we have to use 
+the 'NodejsFunction' construct, which uses esbuild to automatically transpile and bundle our code.
 
 
 Allow public read access to S3 bucket
