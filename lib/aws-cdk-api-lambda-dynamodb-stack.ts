@@ -5,6 +5,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 
 import { join } from 'path';
 
@@ -27,12 +28,25 @@ export class AwsCdkApiLambdaDynamodbStack extends cdk.Stack {
 			},
 		});
 
+		// create a DynamoDB table
+		const table = new dynamodb.Table(this, 'myTable', {
+			removalPolicy: cdk.RemovalPolicy.DESTROY, // resource should be deleted when the stack that created it is deleted.
+			partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+			billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+		});
+
 		// create a Lambda function
 		const myLambda = new NodejsFunction(this, 'myLambda', {
 			runtime: lambda.Runtime.NODEJS_LATEST,
 			entry: join(__dirname, '..', 'lambda-functions', 'main.ts'), // path to the Lambda function source code
 			handler: 'handler',
+			environment: {
+				TABLE_NAME: table.tableName,
+			},
 		});
+
+		// grant the Lambda function full access to the DynamoDB table
+		table.grantFullAccess(myLambda);
 
 		// create an API Gateway REST API with Lambda proxy integration
 		const api = new apigateway.LambdaRestApi(this, 'myApi', {
